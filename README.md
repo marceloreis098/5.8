@@ -195,10 +195,12 @@ Para acessar a aplicação sem digitar `:3000` (usando a porta padrão 80), conf
     ```
 
 3.  **Cole o seguinte conteúdo no arquivo:**
+    Este bloco configura o Nginx para responder ao domínio **inventariopro.usereserva.com** na porta 80 e repassar tudo para a sua aplicação na porta 3000.
+
     ```nginx
     server {
         listen 80;
-        server_name _; # Aceita qualquer IP ou domínio que aponte para este servidor
+        server_name inventariopro.usereserva.com;
 
         location / {
             proxy_pass http://localhost:3000; # Redireciona para o frontend
@@ -229,11 +231,11 @@ Para acessar a aplicação sem digitar `:3000` (usando a porta padrão 80), conf
 
 ### Passo 7: Acesso à Aplicação
 
-Abra o navegador no endereço do seu servidor Ubuntu. Agora você não precisa mais da porta 3000:
+Abra o navegador e digite o endereço:
 
-`http://<ip-do-servidor>`
+`http://inventariopro.usereserva.com`
 
-A aplicação deve carregar a tela de login. Use as credenciais de administrador padrão para o primeiro acesso.
+A aplicação deve carregar a tela de login sem a necessidade de especificar a porta `:3000`.
 
 ---
 
