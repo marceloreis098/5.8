@@ -1,5 +1,5 @@
 {
-  "name": " fase 24  -tirar dependencia porta 3000 - 5.8",
+  "name": "fase 24 - remover porta 3000 da url",
   "description": "É um sistema web moderno para gerenciamento de inventário. Eu usei tecnologias de ponta baseadas em JavaScript, como React para a parte visual e Node.js para a lógica do servidor. É uma arquitetura muito usada por grandes empresas de tecnologia hoje em dia.",
   "requestFramePermissions": []
 }

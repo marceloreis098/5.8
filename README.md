@@ -81,8 +81,9 @@ Antes de configurar o banco de dados ou o servidor, você precisa obter os arqui
 1.  **Adicione as Regras e Habilite:**
     ```bash
     sudo ufw allow ssh          # Permite acesso SSH
-    sudo ufw allow 3000/tcp     # Permite acesso ao Frontend
+    sudo ufw allow 3000/tcp     # Permite acesso ao Frontend (Backend PM2)
     sudo ufw allow 3001/tcp     # Permite acesso à API
+    sudo ufw allow 'Nginx Full' # Permite acesso HTTP (80) e HTTPS (443)
     sudo ufw enable
     ```
 
@@ -179,9 +180,58 @@ Antes de configurar o banco de dados ou o servidor, você precisa obter os arqui
     -   Reiniciar a API: `npx pm2 restart inventario-api`
     -   Reiniciar o Frontend: `npx pm2 restart inventario-frontend`
 
-### Passo 6: Acesso à Aplicação
+### Passo 6: Configurando Nginx (Proxy Reverso)
 
-Abra o navegador no endereço do seu servidor Ubuntu, na porta do frontend: `http://<ip-do-servidor>:3000`.
+Para acessar a aplicação sem digitar `:3000` (usando a porta padrão 80), configuramos o Nginx como um proxy reverso.
+
+1.  **Instale o Nginx:**
+    ```bash
+    sudo apt install nginx
+    ```
+
+2.  **Crie um arquivo de configuração para o site:**
+    ```bash
+    sudo nano /etc/nginx/sites-available/inventario
+    ```
+
+3.  **Cole o seguinte conteúdo no arquivo:**
+    ```nginx
+    server {
+        listen 80;
+        server_name _; # Aceita qualquer IP ou domínio que aponte para este servidor
+
+        location / {
+            proxy_pass http://localhost:3000; # Redireciona para o frontend
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+        }
+    }
+    ```
+
+4.  **Ative a configuração criando um link simbólico:**
+    ```bash
+    sudo ln -s /etc/nginx/sites-available/inventario /etc/nginx/sites-enabled/
+    ```
+
+5.  **Remova a configuração padrão do Nginx (opcional, mas recomendado para evitar conflitos):**
+    ```bash
+    sudo rm /etc/nginx/sites-enabled/default
+    ```
+
+6.  **Verifique se a configuração está correta e reinicie o Nginx:**
+    ```bash
+    sudo nginx -t
+    sudo systemctl restart nginx
+    ```
+
+### Passo 7: Acesso à Aplicação
+
+Abra o navegador no endereço do seu servidor Ubuntu. Agora você não precisa mais da porta 3000:
+
+`http://<ip-do-servidor>`
 
 A aplicação deve carregar a tela de login. Use as credenciais de administrador padrão para o primeiro acesso.
 
